@@ -7,7 +7,8 @@
     "dev": "vite",
     "build": "tsc -b && vite build",
     "lint": "eslint .",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "generate-pwa-assets": "pwa-assets-generator"
   },
   "dependencies": {
     "@emotion/react": "^11.14.0",
@@ -18,16 +19,23 @@
     "@fullcalendar/interaction": "^6.1.19",
     "@fullcalendar/react": "^6.1.19",
     "@fullcalendar/timegrid": "^6.1.19",
+    "@highcharts/react": "^4.1.0",
     "@mui/icons-material": "^7.2.0",
     "@mui/material": "^7.2.0",
     "@mui/x-charts": "^8.11.1",
     "@mui/x-date-pickers": "^8.10.2",
     "@toolpad/core": "^0.16.0",
-    "dayjs": "^1.11.13",
+    "@types/react-window": "^1.8.8",
+    "dayjs": "^1.11.19",
+    "dayjs-plugin-utc": "^0.1.2",
+    "highcharts": "^12.4.0",
     "jwt-decode": "^4.0.0",
+    "mui-color-input": "^9.0.0",
+    "ol": "^10.9.0",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "react-router-dom": "^7.6.3",
+    "react-window": "^1.8.11",
     "vite-tsconfig-paths": "^5.1.4"
   },
   "devDependencies": {

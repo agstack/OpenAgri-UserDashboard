@@ -20,7 +20,7 @@ export interface FarmParcelModel {
     'isIrrigated': boolean,
     'isCultivatedInLevels': boolean,
     'isGroundSlope': boolean,
-    'depiction': string,
+    'depiction': string | null,
     'hasGeometry': {
         '@id': string,
         '@type': string,

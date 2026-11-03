@@ -57,13 +57,21 @@ const TokenRefreshPage = () => {
         }
     }, [session]);
 
-    // Navigate back to the sign in page in case of error
     useEffect(() => {
         if (error) {
+            if (!navigator.onLine) {
+                return;
+            }
             const callbackURL = encodeURIComponent(searchParams.get("callbackURL") ?? '/')
             navigate('/sign-in?callbackURL=' + callbackURL);
         }
     }, [error])
+
+    useEffect(() => {
+        const handleOnline = () => fetchData();
+        window.addEventListener('online', handleOnline);
+        return () => window.removeEventListener('online', handleOnline);
+    }, []);
 
     return (
         <Box display={"flex"} justifyContent={"center"}>

@@ -13,6 +13,13 @@ import useSnackbar from "@hooks/useSnackbar";
 import { useSession } from "@contexts/SessionContext";
 import GenericSnackbar from "@components/shared/GenericSnackbar/GenericSnackbar";
 
+
+import { Accordion, AccordionDetails, AccordionSummary } from "@mui/material";
+import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
+
+const USER_MANUAL_URL = "/user-manual.pdf";
+const FEEDBACK_URL = "https://docs.google.com/forms/d/e/1FAIpQLScltlVkbbhOJ9n8ardZT_TT7LaMH77pGNIBTD_fU5LcjlrD1g/viewform";
+
 const SignInPage = () => {
     const [searchParams] = useSearchParams();
 
@@ -76,9 +83,8 @@ const SignInPage = () => {
                     <Typography variant="h6">Sign In</Typography>
                     <TextField
                         fullWidth
-                        label="Email"
+                        label="Username"
                         name="username"
-                        type="email"
                         value={credentials.username}
                         onChange={handleChange}
                         variant="outlined"
@@ -122,6 +128,26 @@ const SignInPage = () => {
                         <Link textAlign={"center"} href="/sign-up" underline="none">
                             {'Don\'t have an account yet? Register for free'}
                         </Link>
+                    </Box>
+                    <Box sx={{ marginBottom: 2 }}>
+                        <Accordion>
+                            <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+                                <Typography component="span">Demo access</Typography>
+                            </AccordionSummary>
+                            <AccordionDetails>
+                                <Typography>
+                                    Username: <strong>OpenAgri_Test</strong>
+                                    <br />
+                                    Password: <strong>OpenAgritest00!</strong>
+                                </Typography>
+                                <Typography sx={{ mt: 2 }}>
+                                    A user manual is available <Link href={USER_MANUAL_URL} target="_blank" rel="noopener">here</Link>.
+                                </Typography>
+                                <Typography sx={{ mt: 2 }}>
+                                    Please provide your feedback <Link href={FEEDBACK_URL} target="_blank" rel="noopener">here</Link>.
+                                </Typography>
+                            </AccordionDetails>
+                        </Accordion>
                     </Box>
                 </Box>
             </Box>

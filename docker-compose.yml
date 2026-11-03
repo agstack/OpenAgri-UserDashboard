@@ -1,7 +1,10 @@
 services:
   web:
-    build: .
-    image: ghcr.io/openagri-eu/openagri-userdashboard:latest
+    build:
+      context: .
+      args:
+        SOURCE_REPO: ${SOURCE_REPO}
+    image: ghcr.io/${DOCKER_REGISTRY}/openagri-userdashboard:${TAG}
     ports:
       - "${SERVICE_PORT}:${SERVICE_PORT}"
     environment:

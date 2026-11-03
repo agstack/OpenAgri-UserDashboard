@@ -4,6 +4,8 @@ export interface HeadCell<T> {
     id: keyof T;
     label: string;
     numeric: boolean;
+    disableSort?: boolean;
+    renderCell?: (row: T) => React.ReactNode;
 }
 
 export interface EnhancedTableHeadProps<T> {

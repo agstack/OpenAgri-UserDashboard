@@ -28,7 +28,7 @@ const createEmptyPest = () => ({
     ]
 });
 
-const PestCRUDActions: React.FC<PestCRUDActionsProps> = ({ pest, onAction }) => {
+const PestCRUDActions: React.FC<PestCRUDActionsProps> = ({ pest, onAction, canEdit, canDelete }) => {
     const theme = useTheme();
 
     const [formData, setFormData] = useState<PestModel | undefined>();
@@ -184,11 +184,11 @@ const PestCRUDActions: React.FC<PestCRUDActionsProps> = ({ pest, onAction }) => 
         <>
             <Box component="form" noValidate autoComplete="off" sx={{ display: 'flex', flexDirection: 'column', gap: 2, mt: 1 }}>
                 <Stack direction={'column'} spacing={2} >
-                    <TextField fullWidth margin="normal" label="Pest name" name="name" value={formData.name ?? ''} onChange={handleChange} error={!formData.name?.trim()} />
-                    <TextField fullWidth margin="normal" label="Pest description" name="description" value={formData.description ?? ''} onChange={handleChange} error={!formData.description?.trim()} />
+                    <TextField slotProps={{ input: { readOnly: !canEdit } }} fullWidth margin="normal" label="Pest name" name="name" value={formData.name ?? ''} onChange={handleChange} error={!formData.name?.trim()} />
+                    <TextField slotProps={{ input: { readOnly: !canEdit } }} fullWidth margin="normal" label="Pest description" name="description" value={formData.description ?? ''} onChange={handleChange} error={!formData.description?.trim()} />
                     <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2} alignItems="center">
-                        <TextField fullWidth margin="normal" label="EPPO code" name="eppo_code" value={formData.eppo_code ?? ''} onChange={handleChange} error={!formData.eppo_code?.trim()} />
-                        <TextField fullWidth margin="normal" label="Base GDD" name="base_gdd" type="number" value={isNaN(formData.base_gdd) ? '' : formData.base_gdd} onChange={handleChange} error={isNaN(formData.base_gdd)} />
+                        <TextField slotProps={{ input: { readOnly: !canEdit } }} fullWidth margin="normal" label="EPPO code" name="eppo_code" value={formData.eppo_code ?? ''} onChange={handleChange} error={!formData.eppo_code?.trim()} />
+                        <TextField slotProps={{ input: { readOnly: !canEdit } }} fullWidth margin="normal" label="Base GDD °C" name="base_gdd" type="number" value={isNaN(formData.base_gdd) ? '' : formData.base_gdd} onChange={handleChange} error={isNaN(formData.base_gdd)} />
                     </Stack>
                 </Stack>
 
@@ -204,24 +204,25 @@ const PestCRUDActions: React.FC<PestCRUDActionsProps> = ({ pest, onAction }) => 
                             <CardContent>
                                 <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2} alignItems="center">
                                     <Box sx={{ display: 'flex', gap: 2 }}>
-                                        <TextField label="From" name="start" type="number" value={isNaN(gddp.start) ? '' : gddp.start} onChange={(e) => handleGddPointChange(index, e)} disabled={index > 0 || formData.gdd_points.length > 1} error={isNaN(gddp.start) || gddp.start < 0} />
-                                        <TextField label="To" name="end" type="number" value={isNaN(gddp.end) ? '' : gddp.end} onChange={(e) => handleGddPointChange(index, e)} disabled={!isLastPoint} error={isNaN(gddp.end) || isEndValueError} />
+                                        <TextField slotProps={{ input: { readOnly: !canEdit } }} label="From (°C·h)" name="start" type="number" value={isNaN(gddp.start) ? '' : gddp.start} onChange={(e) => handleGddPointChange(index, e)} disabled={index > 0 || formData.gdd_points.length > 1} error={isNaN(gddp.start) || gddp.start < 0} />
+                                        <TextField slotProps={{ input: { readOnly: !canEdit } }} label="To (°C·h)" name="end" type="number" value={isNaN(gddp.end) ? '' : gddp.end} onChange={(e) => handleGddPointChange(index, e)} disabled={!isLastPoint} error={isNaN(gddp.end) || isEndValueError} />
                                     </Box>
                                     <Stack direction="row" spacing={1} alignItems="center" sx={{ width: '100%' }}>
-                                        <TextField fullWidth label="Descriptor" name="descriptor" value={gddp.descriptor ?? ''} onChange={(e) => handleGddPointChange(index, e)} sx={{ flexGrow: 1 }} error={!gddp.descriptor?.trim()} />
-                                        {shouldShowRemoveButton && (<IconButton aria-label="remove" onClick={handleRemoveGddPoint}><RemoveCircleOutlineIcon /></IconButton>)}
+                                        <TextField slotProps={{ input: { readOnly: !canEdit } }} fullWidth label="Descriptor" name="descriptor" value={gddp.descriptor ?? ''} onChange={(e) => handleGddPointChange(index, e)} sx={{ flexGrow: 1 }} error={!gddp.descriptor?.trim()} />
+                                        {shouldShowRemoveButton && (<IconButton disabled={!canEdit} aria-label="remove" onClick={handleRemoveGddPoint}><RemoveCircleOutlineIcon /></IconButton>)}
                                     </Stack>
                                 </Stack>
                             </CardContent>
                         </Card>
                     );
                 })}
-
-                <Box sx={{ display: 'flex', justifyContent: 'center', mt: 2 }}>
-                    <Button variant="outlined" startIcon={<AddIcon />} onClick={handleAddGddPoint} disabled={isAddDisabled}>
-                        Add GDD Point
-                    </Button>
-                </Box>
+                {canEdit &&
+                    <Box sx={{ display: 'flex', justifyContent: 'center', mt: 2 }}>
+                        <Button variant="outlined" startIcon={<AddIcon />} onClick={handleAddGddPoint} disabled={isAddDisabled}>
+                            Add GDD Point
+                        </Button>
+                    </Box>
+                }
                 <Divider />
                 {pest &&
                     <Box sx={{ display: 'flex', justifyContent: 'flex-end', gap: 2 }}>
@@ -231,6 +232,7 @@ const PestCRUDActions: React.FC<PestCRUDActionsProps> = ({ pest, onAction }) => 
                             startIcon={<DeleteIcon />}
                             loading={loading}
                             loadingPosition="start"
+                            disabled={!canDelete}
                             onClick={() => {
                                 showDialog({
                                     title: `Are you sure you want to delete this pest?`,
@@ -247,7 +249,7 @@ const PestCRUDActions: React.FC<PestCRUDActionsProps> = ({ pest, onAction }) => 
                             startIcon={<SaveIcon />}
                             loading={loading}
                             loadingPosition="start"
-                            disabled={isFormInvalid}
+                            disabled={isFormInvalid || !canEdit}
                             onClick={handlePatch}
                         >
                             Save Changes

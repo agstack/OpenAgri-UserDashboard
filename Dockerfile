@@ -1,4 +1,7 @@
+ARG SOURCE_REPO=https://github.com/openagri-eu/openagri-userdashboard
+
 FROM node:22.17.1 AS builder
+LABEL org.opencontainers.image.source=${SOURCE_REPO}
 
 # set working directory
 WORKDIR /app

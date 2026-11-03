@@ -9,6 +9,7 @@ import dayjs from "dayjs";
 import { Fragment, useEffect, useState } from "react";
 
 import AccessTimeIcon from '@mui/icons-material/AccessTime';
+import { AgriculturalMachine } from "@models/AgriculturalMachine";
 
 interface ModelData {
     status?: UAVStatus
@@ -58,7 +59,7 @@ const UAVFlightsForecast = () => {
         }
     );
 
-    const { fetchData: agriMachineFetchData, loading: agriMachinesLoading, response: agriMachinesResponse, error: agriMachinesError } = useFetch<any[]>(
+    const { fetchData: agriMachineFetchData, loading: agriMachinesLoading, response: agriMachinesResponse, error: agriMachinesError } = useFetch<AgriculturalMachine[]>(
         `proxy/farmcalendar/api/v1/AgriculturalMachines/?format=json`,
         {
             method: 'GET',

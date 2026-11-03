@@ -4,12 +4,24 @@ import { HeadCell } from "@components/shared/GenericSortableTable/GenericSortabl
 import useFetch from "@hooks/useFetch";
 import useSnackbar from "@hooks/useSnackbar";
 import { FarmModel } from "@models/Farm";
-import { Skeleton } from "@mui/material";
+import { Accordion, AccordionDetails, AccordionSummary, Box, Skeleton, Typography } from "@mui/material";
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useOutletContext } from "react-router-dom";
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+import AddFarm from "./AddFarm/AddFarm";
+import { ServiceContextType } from "@layouts/services/FarmCalendarLayout";
 
 const FarmsPage = () => {
+    const { actions } = useOutletContext<ServiceContextType>();
+    const canAdd = actions.includes('add');
+
     const [farms, setFarms] = useState<FarmRow[]>([]);
+
+    const [expanded, setExpanded] = useState<boolean>(false);
+
+    const handleAccordionChange = () => {
+        setExpanded(!expanded);
+    };
 
     const { fetchData, loading, response, error } = useFetch<FarmModel[]>(
         "proxy/farmcalendar/api/v1/Farm/?format=json",
@@ -77,8 +89,22 @@ const FarmsPage = () => {
     const handleRowClick = (farm: FarmRow) => {
         navigate(`../farm/${farm.id.split(":")[3]}`);
     };
+
+    const onAddNewFarm = () => {
+        fetchData();
+        setExpanded(false);
+    };
+
     return (
-        <>
+        <Box display={'flex'} flexDirection={'column'} gap={2}>
+            <Accordion disabled={!canAdd} expanded={expanded} onChange={handleAccordionChange}>
+                <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+                    <Typography component="span">Add new farm</Typography>
+                </AccordionSummary>
+                <AccordionDetails sx={{ maxHeight: 480, overflowY: 'scroll' }}>
+                    <AddFarm onAction={onAddNewFarm}></AddFarm>
+                </AccordionDetails>
+            </Accordion>
             {loading && <Skeleton variant="rectangular" height={48} />}
             {
                 !loading && !error &&
@@ -90,7 +116,7 @@ const FarmsPage = () => {
                 open={snackbarState.open}
                 onClose={closeSnackbar}
             />
-        </>
+        </Box>
     )
 }
 

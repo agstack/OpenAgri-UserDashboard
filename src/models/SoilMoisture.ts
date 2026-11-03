@@ -14,6 +14,14 @@ export interface DatasetRow {
     [key: string]: any; // Needed for chart
 };
 
+export interface DatasetResponse {
+    data_points: DatasetRow[];
+    high_dose_irrigation_days: string[];
+    field_capacity: number;
+    stress_level: number;
+    wilting_point: number;
+}
+
 export interface SoilMoistureResponseJSONLD {
     '@context': string[];
     '@graph': SoilMoistureGraphEntry[];
@@ -72,19 +80,19 @@ interface SoilMoistureGraphEntry {
     };
 }
 
-export interface SoilMoistureResponseJSON  {
-    
-        "dataset_id": string,
-        "time_period": string[],
-        "irrigation_events_detected": number,
-        "precipitation_events": number,
-        "high_dose_irrigation_events": number,
-        "high_dose_irrigation_events_dates": string[],
-        "field_capacity": number,
-        "stress_level": number,
-        "number_of_saturation_days": number,
-        "saturation_dates": string[],
-        "no_of_stress_days": number,
-        "stress_dates": string[]
-    
+export interface SoilMoistureResponseJSON {
+
+    "dataset_id": string,
+    "time_period": string[],
+    "irrigation_events_detected": number,
+    "precipitation_events": number,
+    "high_dose_irrigation_events": number,
+    "high_dose_irrigation_events_dates": string[],
+    "field_capacity": number,
+    "stress_level": number,
+    "number_of_saturation_days": number,
+    "saturation_dates": string[],
+    "no_of_stress_days": number,
+    "stress_dates": string[]
+
 }

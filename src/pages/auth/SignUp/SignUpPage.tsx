@@ -12,9 +12,14 @@ import useSnackbar from "@hooks/useSnackbar";
 import GenericSnackbar from "@components/shared/GenericSnackbar/GenericSnackbar";
 
 const SignUpPage = () => {
-    const [credentials, setCredentials] = useState({ email: "", password: "", confirmPassword: "" });
-    const [errors, setErrors] = useState({ email: "", password: "", confirmPassword: "" });
+    const [credentials, setCredentials] = useState({ username: "", email: "", password: "", confirm_password: "", firstName: "", lastName: "" });
+    const [errors, setErrors] = useState({ username: "", email: "", password: "", confirm_password: "" });
     const [showPassword, setShowPassword] = useState(false);
+
+    const validateUsername = (username: string) => {
+        if (!username) return "Username is required";
+        return "";
+    };
 
     const validateEmail = (email: string) => {
         if (!email) return "Email is required";
@@ -24,7 +29,7 @@ const SignUpPage = () => {
 
     const validatePassword = (password: string) => {
         if (!password) return "Password is required";
-        if (password.length < 6) return "Password must be at least 6 characters";
+        if (password.length < 8) return "Password must be at least 8 characters";
         return "";
     };
 
@@ -36,9 +41,10 @@ const SignUpPage = () => {
 
     const validateField = (name: string, value: string) => {
         let error = "";
+        if (name === "username") error = validateUsername(value);
         if (name === "email") error = validateEmail(value);
         if (name === "password") error = validatePassword(value);
-        if (name === "confirmPassword") error = validateConfirmPassword(value);
+        if (name === "confirm_password") error = validateConfirmPassword(value);
         setErrors((prev) => ({ ...prev, [name]: error }));
     };
 
@@ -48,25 +54,30 @@ const SignUpPage = () => {
         validateField(name, value);
     };
 
-    const { fetchData, loading, response, error } = useFetch<{ message: string }>(
-        "user/register", // TODO: use real API
+    const { fetchData, loading, response, error } = useFetch<{ success: boolean; message: string }>(
+        "register/",
         {
-            headers: {
-                "Content-Type": "application/json",
-            },
             method: "POST",
-            body: { email: credentials.email, password: credentials.password },
+            body: {
+                username: credentials.username,
+                email: credentials.email,
+                password: credentials.password,
+                confirm_password: credentials.confirm_password,
+                ...(credentials.firstName && { first_name: credentials.firstName }),
+                ...(credentials.lastName && { last_name: credentials.lastName }),
+            },
         }
     );
 
     const handleSubmit = async () => {
+        const usernameError = validateUsername(credentials.username);
         const emailError = validateEmail(credentials.email);
         const passwordError = validatePassword(credentials.password);
-        const confirmPasswordError = validateConfirmPassword(credentials.confirmPassword);
+        const confirmPasswordError = validateConfirmPassword(credentials.confirm_password);
 
-        setErrors({ email: emailError, password: passwordError, confirmPassword: confirmPasswordError });
+        setErrors({ username: usernameError, email: emailError, password: passwordError, confirm_password: confirmPasswordError });
 
-        if (emailError || passwordError || confirmPasswordError) return;
+        if (usernameError || emailError || passwordError || confirmPasswordError) return;
 
         await fetchData();
     };
@@ -76,6 +87,7 @@ const SignUpPage = () => {
 
     useEffect(() => {
         if (response) {
+            showSnackbar("success", response.message ?? "Registration successful. Please log in.");
             setTimeout(() => navigate("/sign-in"), 1000);
         }
     }, [response]);
@@ -92,6 +104,32 @@ const SignUpPage = () => {
                 <Box alignItems="center" justifyContent="center" display="flex" flex={1} maxWidth={500} flexDirection="column" gap={2}>
                     <img src={logo} alt="" width="200px" />
                     <Typography variant="h6">Sign Up</Typography>
+                    <TextField
+                        fullWidth
+                        label="Username"
+                        name="username"
+                        value={credentials.username}
+                        onChange={handleChange}
+                        error={!!errors.username}
+                        helperText={errors.username}
+                        variant="outlined"
+                    />
+                    <TextField
+                        fullWidth
+                        label="First Name"
+                        name="firstName"
+                        value={credentials.firstName}
+                        onChange={handleChange}
+                        variant="outlined"
+                    />
+                    <TextField
+                        fullWidth
+                        label="Last Name"
+                        name="lastName"
+                        value={credentials.lastName}
+                        onChange={handleChange}
+                        variant="outlined"
+                    />
                     <TextField
                         fullWidth
                         label="Email"
@@ -132,12 +170,12 @@ const SignUpPage = () => {
                     <TextField
                         fullWidth
                         label="Confirm Password"
-                        name="confirmPassword"
+                        name="confirm_password"
                         type={showPassword ? "text" : "password"}
-                        value={credentials.confirmPassword}
+                        value={credentials.confirm_password}
                         onChange={handleChange}
-                        error={!!errors.confirmPassword}
-                        helperText={errors.confirmPassword}
+                        error={!!errors.confirm_password}
+                        helperText={errors.confirm_password}
                         variant="outlined"
                         slotProps={{
                             input: {

@@ -1,4 +1,4 @@
-import { IconButton, ListItemIcon, ListItemText, MenuItem, MenuList, Paper, Popover, Tooltip } from "@mui/material";
+import { IconButton, ListItemIcon, ListItemText, MenuItem, MenuList, Paper, Popover, Stack, Tooltip } from "@mui/material";
 import { useCallback, useEffect, useState } from "react";
 
 import PersonIcon from '@mui/icons-material/Person';
@@ -6,6 +6,9 @@ import LogoutIcon from '@mui/icons-material/Logout';
 import { useNavigate } from "react-router-dom";
 import { useSession } from "@contexts/SessionContext";
 import useFetch from "@hooks/useFetch";
+import { clearUserCaches } from "@utils/pwaCache";
+import OfflineChip from "@components/shared/OfflineChip/OfflineChip";
+import PrepareOfflineButton from "@components/dashboard/PrepareOffline/PrepareOfflineButton";
 
 const ToolbarActions = () => {
     const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -33,8 +36,10 @@ const ToolbarActions = () => {
 
     useEffect(() => {
         if (response || error) {
-            setSession(null);
-            navigate("/");
+            clearUserCaches().finally(() => {
+                setSession(null);
+                navigate("/");
+            });
         }
     }, [response, error]);
 
@@ -43,7 +48,9 @@ const ToolbarActions = () => {
     }
 
     return (
-        <>
+        <Stack direction="row" alignItems="center" spacing={1}>
+            <OfflineChip />
+            <PrepareOfflineButton />
             <Tooltip title="Settings" enterDelay={1000}>
                 <div>
                     <IconButton type="button" aria-label="settings" onClick={toggleMenu}>
@@ -79,7 +86,7 @@ const ToolbarActions = () => {
                     </MenuList>
                 </Paper>
             </Popover>
-        </>
+        </Stack>
     );
 }
 

@@ -8,8 +8,15 @@ import { PestModel, PestsResponseModel } from "@models/Pest";
 import { Accordion, AccordionDetails, AccordionSummary, Box, Skeleton, Typography } from "@mui/material";
 import { useEffect, useState } from "react";
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+import { useOutletContext } from "react-router-dom";
+import { ServiceContextType } from "@layouts/services/PestAndDiseaseLayout";
 
 const PestsPage = () => {
+    const { actions } = useOutletContext<ServiceContextType>();
+    const canAdd = actions.includes('add');
+    const canEdit = actions.includes('edit');
+    const canDelete = actions.includes('delete');
+
     const [pests, setPests] = useState<PestRow[]>([]);
     const [selectedPest, setSelectedPest] = useState<PestModel | undefined>(undefined);
 
@@ -61,7 +68,7 @@ const PestsPage = () => {
     const pestsHeadCells: readonly HeadCell<PestRow>[] = [
         { id: 'name', numeric: false, label: 'Name' },
         { id: 'eppoCode', numeric: false, label: 'EPPO code' },
-        { id: 'baseGDD', numeric: false, label: 'Base GDD' },
+        { id: 'baseGDD', numeric: false, label: 'Base GDD (°C)' },
     ];
 
     const handleRowClick = (pest: PestRow) => {
@@ -102,12 +109,12 @@ const PestsPage = () => {
     return (
         <>
             <Box display={'flex'} flexDirection={'column'} gap={2}>
-                <Accordion expanded={expanded} onChange={handleAccordionChange}>
+                <Accordion disabled={!canAdd} expanded={expanded} onChange={handleAccordionChange}>
                     <AccordionSummary expandIcon={<ExpandMoreIcon />}>
                         <Typography component="span">Add new pest</Typography>
                     </AccordionSummary>
-                    <AccordionDetails sx={{ maxHeight: 480, overflowY: 'scroll'}}>
-                        <PestCRUDActions onAction={onAddNewPest}></PestCRUDActions>
+                    <AccordionDetails sx={{ maxHeight: 480, overflowY: 'scroll' }}>
+                        <PestCRUDActions onAction={onAddNewPest} canEdit={canAdd} canDelete={canDelete}></PestCRUDActions>
                     </AccordionDetails>
                 </Accordion>
                 {getLoading && <Skeleton variant="rectangular" height={48} />}
@@ -117,7 +124,7 @@ const PestsPage = () => {
                 }
             </Box>
             <GenericDialog {...dialogProps} onClose={handleCloseDialog}>
-                <PestCRUDActions pest={selectedPest} onAction={onEditPest}></PestCRUDActions>
+                <PestCRUDActions pest={selectedPest} onAction={onEditPest} canEdit={canEdit} canDelete={canDelete}></PestCRUDActions>
             </GenericDialog>
         </>
     )

@@ -1,4 +1,4 @@
-type SnackbarType = 'success' | 'error' | 'info';
+type SnackbarType = 'success' | 'error' | 'info' | 'warning';
 
 export interface GenericSnackbarProps {
     type: SnackbarType;

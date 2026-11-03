@@ -5,13 +5,26 @@ import useFetch from "@hooks/useFetch";
 import useSnackbar from "@hooks/useSnackbar";
 import { FarmModel } from "@models/Farm";
 import { FarmParcelModel } from "@models/FarmParcel";
-import { Skeleton } from "@mui/material";
+import { Accordion, AccordionDetails, AccordionSummary, Box, Skeleton, Typography } from "@mui/material";
 import dayjs from "dayjs";
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useOutletContext } from "react-router-dom";
+import AddFarmParcel from "./AddFarmParcel/AddFarmParcel";
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+import { ServiceContextType } from "@layouts/services/FarmCalendarLayout";
+
 
 const FarmParcelsPage = () => {
+    const { actions } = useOutletContext<ServiceContextType>();
+    const canAdd = actions.includes('add');
+
     const [parcels, setParcels] = useState<ParcelRow[]>([]);
+
+    const [expanded, setExpanded] = useState<boolean>(false);
+
+    const handleAccordionChange = () => {
+        setExpanded(!expanded);
+    };
 
     const { fetchData, loading, response, error } = useFetch<FarmParcelModel[]>(
         "proxy/farmcalendar/api/v1/FarmParcels/?format=json",
@@ -78,8 +91,22 @@ const FarmParcelsPage = () => {
     const handleRowClick = (parcel: ParcelRow) => {
         navigate(`../farm-parcel/${parcel.id.split(":")[3]}`);
     };
+
+    const onAddNewFarmParcel = () => {
+        fetchData();
+        setExpanded(false);
+    };
+
     return (
-        <>
+        <Box display={'flex'} flexDirection={'column'} gap={2}>
+            <Accordion disabled={!canAdd} expanded={expanded} onChange={handleAccordionChange}>
+                <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+                    <Typography component="span">Add new farm parcel</Typography>
+                </AccordionSummary>
+                <AccordionDetails sx={{ maxHeight: 480, overflowY: 'scroll' }}>
+                    <AddFarmParcel onAction={onAddNewFarmParcel}></AddFarmParcel>
+                </AccordionDetails>
+            </Accordion>
             {loading || farmsLoading && <Skeleton variant="rectangular" height={48} />}
             {
                 !(loading || farmsLoading) && !error &&
@@ -91,7 +118,7 @@ const FarmParcelsPage = () => {
                 open={snackbarState.open}
                 onClose={closeSnackbar}
             />
-        </>
+        </Box>
     )
 }
 

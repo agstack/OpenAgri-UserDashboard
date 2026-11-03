@@ -1,8 +1,9 @@
 import useFetch from "@hooks/useFetch";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import GenericSnackbar from "../../shared/GenericSnackbar/GenericSnackbar";
 import useSnackbar from "@hooks/useSnackbar";
 import { FarmParcelModel } from "@models/FarmParcel";
+import { FarmModel } from "@models/Farm";
 import { useSession } from "@contexts/SessionContext";
 import { Box, Button, Skeleton } from "@mui/material";
 import Accordion from '@mui/material/Accordion';
@@ -16,6 +17,7 @@ import ClearIcon from '@mui/icons-material/Clear';
 const ParcelSelectionModule = () => {
 
     const [parcels, setParcels] = useState<FarmParcelModel[]>([]);
+    const [farms, setFarms] = useState<FarmModel[]>([]);
     const { session, setSession } = useSession();
     const [expanded, setExpanded] = useState<boolean>(!session?.farm_parcel);
 
@@ -26,11 +28,27 @@ const ParcelSelectionModule = () => {
         }
     );
 
+    const { fetchData: fetchFarms, response: farmsResponse } = useFetch<FarmModel[]>(
+        "proxy/farmcalendar/api/v1/Farm/?format=json",
+        { method: 'GET' },
+    );
+
     const { snackbarState, showSnackbar, closeSnackbar } = useSnackbar();
 
     useEffect(() => {
-        fetchData()
+        fetchData();
+        fetchFarms();
     }, [])
+
+    useEffect(() => {
+        if (Array.isArray(farmsResponse)) setFarms(farmsResponse);
+    }, [farmsResponse])
+
+    const farmNamesById = useMemo(() => {
+        const map: Record<string, string> = {};
+        for (const f of farms) map[f["@id"]] = f.name;
+        return map;
+    }, [farms])
 
     useEffect(() => {
         if (error) {
@@ -85,7 +103,7 @@ const ParcelSelectionModule = () => {
                     </AccordionSummary>
                     <AccordionDetails>
                         <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
-                            <ParcelSelectionList parcels={parcels} selectedParcelId={session?.farm_parcel?.["@id"]} f={selectFarmParcel}></ParcelSelectionList>
+                            <ParcelSelectionList parcels={parcels} selectedParcelId={session?.farm_parcel?.["@id"]} f={selectFarmParcel} farmNamesById={farmNamesById}></ParcelSelectionList>
                             <Box>
                                 <Button
                                     variant="contained"

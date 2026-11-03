@@ -24,15 +24,37 @@ import FarmPage from '@pages/dashboard/services/FarmCalendar/FarmLocations/Farm.
 import TokenRefreshPage from '@pages/auth/TokenRefresh/TokenRefresh.tsx';
 import RegisterCalendarActivityPage from '@pages/dashboard/services/FarmCalendar/FarmCalendarActivities/RegisterActivity.tsx';
 import EditCalendarActivityPage from '@pages/dashboard/services/FarmCalendar/FarmCalendarActivities/EditActivity.tsx';
+import ActivityTypesPage from '@pages/dashboard/services/FarmCalendar/ActivityTypes/ActivityTypes.tsx';
+import AddActivityTypePage from '@pages/dashboard/services/FarmCalendar/ActivityTypes/AddActivityType.tsx';
+import EditActivityTypePage from '@pages/dashboard/services/FarmCalendar/ActivityTypes/EditActivityType.tsx';
+import FarmAnimalsPage from '@pages/dashboard/services/FarmCalendar/FarmAnimals/FarmAnimals.tsx';
+import EditFarmAnimalPage from '@pages/dashboard/services/FarmCalendar/FarmAnimals/EditFarmAnimal.tsx';
+import AgriculturalMachinesPage from '@pages/dashboard/services/FarmCalendar/AgriculturalMachines/AgriculturalMachines.tsx';
+import EditAgriculturalMachinePage from '@pages/dashboard/services/FarmCalendar/AgriculturalMachines/EditAgriculturalMachine.tsx';
+import FarmCropsPage from '@pages/dashboard/services/FarmCalendar/FarmCrops/FarmCrops.tsx';
+import EditFarmCropPage from '@pages/dashboard/services/FarmCalendar/FarmCrops/EditFarmCrop.tsx';
+import FertilizersPage from '@pages/dashboard/services/FarmCalendar/Fertilizers/Fertilizers.tsx';
+import EditFertilizerPage from '@pages/dashboard/services/FarmCalendar/Fertilizers/EditFertilizer.tsx';
+import PesticidesPage from '@pages/dashboard/services/FarmCalendar/Pesticides/Pesticides.tsx';
+import EditPesticidePage from '@pages/dashboard/services/FarmCalendar/Pesticides/EditPesticide.tsx';
 import WeatherDataPage from '@pages/dashboard/services/WeatherData/WeatherData.tsx';
 import EToCalculatorPage from '@pages/dashboard/services/Irrigation/EToCalculator.tsx';
 import UploadDatasetPage from '@pages/dashboard/services/Irrigation/UploadDataset.tsx';
 import SoilMoistureAnalysisPage from '@pages/dashboard/services/Irrigation/SoilMoistureAnalysis.tsx';
+import SoilTypesPage from '@pages/dashboard/services/Irrigation/SoilTypes.tsx';
+import EditSoilTypePage from '@pages/dashboard/services/Irrigation/EditSoilType.tsx';
 import IrrigationOperationsReportPage from '@pages/dashboard/services/FarmCalendar/ReportingService/IrrigationOperations.tsx';
 import FarmAnimalsReportPage from '@pages/dashboard/services/FarmCalendar/ReportingService/FarmAnimals.tsx';
+import FieldNotebookReportPage from '@pages/dashboard/services/FarmCalendar/ReportingService/FieldNotebook.tsx';
 import PestsPage from '@pages/dashboard/services/PestAndDisease/Pests.tsx';
-import DiseasesPage from '@pages/dashboard/services/PestAndDisease/Diseases.tsx';
-import RiskIndexPage from '@pages/dashboard/services/PestAndDisease/RiskIndex.tsx';
+import ThreatModelsPage from '@pages/dashboard/services/PestAndDisease/ThreatModels.tsx';
+import RiskForecastPage from '@pages/dashboard/services/PestAndDisease/RiskForecast.tsx';
+
+import FarmCalendarLayout from './layouts/services/FarmCalendarLayout.tsx';
+import IrrigationManagementLayout from './layouts/services/IrrigationManagementLayout.tsx';
+import PestAndDiseaseLayout from './layouts/services/PestAndDiseaseLayout.tsx';
+import ReportingLayout from './layouts/services/ReportingLayout.tsx';
+import WeatherDataLayout from './layouts/services/WeatherDataLayout.tsx';
 
 const router = createBrowserRouter([
   {
@@ -48,109 +70,184 @@ const router = createBrowserRouter([
           },
           /** Farm calendar */
           {
-            path: 'farm-calendar',
-            // children: [
-            //   {
-            //     index: true,
-            //     element: <Redirect to='farm-calendar/farm-calendar' />,
-            //   },
-            //   /** Farm calendar */
-            //   {
-            //     path: 'farm-calendar',
-            Component: FarmCalendarPage,
-          },
-          {
-            path: 'farm-calendar/register-activity',
-            Component: RegisterCalendarActivityPage
-          },
-          {
-            path: 'farm-calendar/edit-activity/:id',
-            Component: EditCalendarActivityPage
-          },
-          {
-            path: 'farm-locations',
+            Component: FarmCalendarLayout,
             children: [
               {
-                index: true,
-                element: <Redirect to='farm-locations/farms' />,
+                path: 'farm-calendar',
+                Component: FarmCalendarPage,
               },
               {
-                path: 'farms',
-                Component: FarmsPage
+                path: 'farm-calendar/register-activity',
+                Component: RegisterCalendarActivityPage
               },
               {
-                path: 'farm/:id',
-                Component: FarmPage
+                path: 'farm-calendar/edit-activity/:id',
+                Component: EditCalendarActivityPage
               },
               {
-                path: 'farm-parcels',
-                Component: FarmParcelsPage
+                path: 'farm-calendar/activity-types',
+                Component: ActivityTypesPage
               },
               {
-                path: 'farm-parcel/:id',
-                Component: FarmParcelPage
+                path: 'farm-calendar/activity-types/add',
+                Component: AddActivityTypePage
+              },
+              {
+                path: 'farm-calendar/activity-types/edit/:id',
+                Component: EditActivityTypePage
+              },
+              {
+                path: 'farm-animals',
+                Component: FarmAnimalsPage
+              },
+              {
+                path: 'farm-animals/:id',
+                Component: EditFarmAnimalPage
+              },
+              {
+                path: 'agricultural-machines',
+                Component: AgriculturalMachinesPage
+              },
+              {
+                path: 'agricultural-machines/:id',
+                Component: EditAgriculturalMachinePage
+              },
+              {
+                path: 'farm-crops',
+                Component: FarmCropsPage
+              },
+              {
+                path: 'farm-crops/:id',
+                Component: EditFarmCropPage
+              },
+              {
+                path: 'fertilizers',
+                Component: FertilizersPage
+              },
+              {
+                path: 'fertilizers/:id',
+                Component: EditFertilizerPage
+              },
+              {
+                path: 'pesticides',
+                Component: PesticidesPage
+              },
+              {
+                path: 'pesticides/:id',
+                Component: EditPesticidePage
+              },
+              {
+                path: 'farm-locations',
+                children: [
+                  {
+                    index: true,
+                    element: <Redirect to='farm-locations/farms' />,
+                  },
+                  {
+                    path: 'farms',
+                    Component: FarmsPage
+                  },
+                  {
+                    path: 'farm/:id',
+                    Component: FarmPage
+                  },
+                  {
+                    path: 'farm-parcels',
+                    Component: FarmParcelsPage
+                  },
+                  {
+                    path: 'farm-parcel/:id',
+                    Component: FarmParcelPage
+                  },
+                ]
               },
             ]
           },
           /** End of Farm calendar */
           {
-            path: 'reporting-service',
+            Component: ReportingLayout,
             children: [
               {
-                index: true,
-                element: <Redirect to='reporting-service/compost-operations' />,
-              },
-              {
-                path: 'compost-operations',
-                Component: CompostOperationsReportPage
-              },
-              {
-                path: 'farm-animals',
-                Component: FarmAnimalsReportPage
-              },
-              {
-                path: 'irrigation-operations',
-                Component: IrrigationOperationsReportPage
+                path: 'reporting-service',
+                children: [
+                  {
+                    index: true,
+                    element: <Redirect to='reporting-service/compost-operations' />,
+                  },
+                  {
+                    path: 'compost-operations',
+                    Component: CompostOperationsReportPage
+                  },
+                  {
+                    path: 'farm-animals',
+                    Component: FarmAnimalsReportPage
+                  },
+                  {
+                    path: 'irrigation-operations',
+                    Component: IrrigationOperationsReportPage
+                  },
+                  {
+                    path: 'field-notebook',
+                    Component: FieldNotebookReportPage
+                  },
+                ]
               },
             ]
           },
-          // ]
-          // },
-          // {
-          //   path: 'wkt-input',
-          //   Component: WKTInputPage
-          // },
           {
-            path: 'eto-calculator',
-            Component: EToCalculatorPage
+            Component: IrrigationManagementLayout,
+            children: [
+              {
+                path: 'eto-calculator',
+                Component: EToCalculatorPage
+              },
+              {
+                path: 'upload-dataset',
+                Component: UploadDatasetPage
+              },
+              {
+                path: 'soil-moisture-analysis',
+                Component: SoilMoistureAnalysisPage
+              },
+              {
+                path: 'soil-types',
+                Component: SoilTypesPage
+              },
+              {
+                path: 'soil-types/:id',
+                Component: EditSoilTypePage
+              },
+            ]
           },
           {
-            path: 'upload-dataset',
-            Component: UploadDatasetPage
+            Component: PestAndDiseaseLayout,
+            children: [
+              {
+                path: 'pests',
+                Component: PestsPage
+              },
+              {
+                path: 'gdd',
+                Component: GrowingDegreeDaysPage
+              },
+              {
+                path: 'threat-models',
+                Component: ThreatModelsPage
+              },
+              {
+                path: 'risk-forecast',
+                Component: RiskForecastPage
+              },
+            ]
           },
           {
-            path: 'soil-moisture-analysis',
-            Component: SoilMoistureAnalysisPage
-          },
-          {
-            path: 'pests',
-            Component: PestsPage
-          },
-          {
-            path: 'gdd',
-            Component: GrowingDegreeDaysPage
-          },
-          {
-            path: 'diseases',
-            Component: DiseasesPage
-          },
-          {
-            path: 'risk-index',
-            Component: RiskIndexPage
-          },
-          {
-            path: 'weather-data',
-            Component: WeatherDataPage
+            Component: WeatherDataLayout,
+            children: [
+              {
+                path: 'weather-data',
+                Component: WeatherDataPage
+              },
+            ]
           },
         ]
       },

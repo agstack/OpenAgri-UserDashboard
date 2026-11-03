@@ -2,10 +2,12 @@ import { useSession } from "@contexts/SessionContext";
 import { useState } from "react";
 
 interface FetchOptions {
-    method?: "GET" | "POST" | "PUT" | "PATCH" | "DELETE";
+    method?: "GET" | "POST" | "PUT" | "PATCH" | "DELETE" | "OPTIONS";
     headers?: Record<string, string>;
     body?: any;
     responseType?: 'json' | 'blob';
+    url?: string;
+    noCache?: boolean;
 }
 
 const useFetch = <FetchResponse = any>(
@@ -50,16 +52,18 @@ const useFetch = <FetchResponse = any>(
                     finalHeaders["Authorization"] = `Bearer ${token}`;
                 }
 
-                return {
+                const opts: RequestInit = {
                     method: currentOptions.method,
                     headers: finalHeaders,
                     body: finalBody,
                 };
+                if (currentOptions.noCache) opts.cache = 'no-store';
+                return opts;
             };
 
             const initialToken = session?.user?.token;
             let fetchOptions = getFetchOptions(initialToken);
-            let response = await fetch(apiUrl + url, fetchOptions);
+            let response = await fetch(apiUrl + (currentOptions.url ?? url), fetchOptions);
 
             if (response.status === 401) {
                 const refreshToken = session?.user?.refresh_token;
@@ -93,7 +97,7 @@ const useFetch = <FetchResponse = any>(
                 });
 
                 fetchOptions = getFetchOptions(newToken.access);
-                response = await fetch(apiUrl + url, fetchOptions);
+                response = await fetch(apiUrl + (currentOptions.url ?? url), fetchOptions);
             }
 
             if (!response.ok) {

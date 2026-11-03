@@ -1,6 +1,6 @@
 import { useState } from 'react';
 
-type SnackbarType = 'success' | 'error' | 'info';
+type SnackbarType = 'success' | 'error' | 'info' | 'warning';
 
 interface SnackbarState {
     type: SnackbarType;
@@ -16,6 +16,14 @@ const useSnackbar = () => {
     });
 
     const showSnackbar = (type: SnackbarType, message: string) => {
+        if (type === 'error' && !navigator.onLine) {
+            setSnackbarState({
+                open: true,
+                type: 'warning',
+                message: 'Failed to fetch — no internet connection. Showing cached data where available.',
+            });
+            return;
+        }
         setSnackbarState({ open: true, type, message });
     };
 

@@ -48,18 +48,22 @@ function EnhancedTableHead<T>(props: EnhancedTableHeadProps<T>) {
             padding={'normal'}
             sortDirection={orderBy === headCell.id ? order : false}
           >
-            <TableSortLabel
-              active={orderBy === headCell.id}
-              direction={orderBy === headCell.id ? order : 'asc'}
-              onClick={createSortHandler(headCell.id)}
-            >
-              {headCell.label}
-              {orderBy === headCell.id ? (
-                <Box component="span" sx={visuallyHidden}>
-                  {order === 'desc' ? 'sorted descending' : 'sorted ascending'}
-                </Box>
-              ) : null}
-            </TableSortLabel>
+            {headCell.disableSort ? (
+              headCell.label
+            ) : (
+              <TableSortLabel
+                active={orderBy === headCell.id}
+                direction={orderBy === headCell.id ? order : 'asc'}
+                onClick={createSortHandler(headCell.id)}
+              >
+                {headCell.label}
+                {orderBy === headCell.id ? (
+                  <Box component="span" sx={visuallyHidden}>
+                    {order === 'desc' ? 'sorted descending' : 'sorted ascending'}
+                  </Box>
+                ) : null}
+              </TableSortLabel>
+            )}
           </TableCell>
         ))}
       </TableRow>
@@ -133,8 +137,8 @@ function GenericSortableTable<T extends { id: number | string }>({
                     onClick={() => onRowClick && onRowClick(row)}
                   >
                     {headCells.map((cell, cellIndex) => {
-                      const originalValue = row[cell.id] as React.ReactNode;
-                      const cellValue = originalValue == null ? 'N/A' : originalValue;
+                      const rendered = cell.renderCell ? cell.renderCell(row) : (row[cell.id] as React.ReactNode);
+                      const cellValue = rendered == null ? 'N/A' : rendered;
                       if (cellIndex === 0) {
                         return (
                           <TableCell

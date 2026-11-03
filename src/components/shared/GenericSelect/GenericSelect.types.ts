@@ -1,9 +1,31 @@
-export interface GenericSelectProps<T, R = T[]> {
+interface GenericSelectPropsBase<T, R = T[]> {
     endpoint: string;
+    data?: R;
     label: string;
-    getOptionLabel: (item: T) => string; // Function to get the display label for each item
-    getOptionValue: (item: T) => string | number; // Function to get the value for each item
+    method?: "GET" | "OPTIONS";
+    canEdit?: boolean;
+    getOptionLabel: (item: T) => string;
+    getOptionValue: (item: T) => string;
+    transformResponse?: (response: R) => T[];
+    error?: boolean;
+    required?: boolean;
+    helperText?: string;
+}
+
+// Props for a SINGLE select (multiple is false or undefined)
+type GenericSelectPropsSingle<T, R = T[]> = GenericSelectPropsBase<T, R> & {
+    multiple?: false;
     selectedValue: string | undefined;
     setSelectedValue: React.Dispatch<React.SetStateAction<string>>;
-    transformResponse?: (response: R) => T[]; // Function to transform the API response
-}
+};
+
+// Props for a MULTI select (multiple is true)
+type GenericSelectPropsMultiple<T, R = T[]> = GenericSelectPropsBase<T, R> & {
+    multiple: true;
+    selectedValue: string[] | undefined;
+    setSelectedValue: React.Dispatch<React.SetStateAction<string[]>>;
+};
+
+export type GenericSelectProps<T, R = T[]> =
+    | GenericSelectPropsSingle<T, R>
+    | GenericSelectPropsMultiple<T, R>;
